@@ -15,7 +15,7 @@ const HubTCri = () => {
 
     const fetchTrails = async () => {
         try {
-            const response = await axios.get(`${api}/trail/trailsByCreator/${decodedToken.edv}`);
+            const response = await axios.get(`${api}/trail/trails_creator/${decodedToken.edv}`);
             setTrilhas(response.data); // Define as trilhas no estado
         } catch (error) {
             console.error("Erro ao buscar trilhas:", error);

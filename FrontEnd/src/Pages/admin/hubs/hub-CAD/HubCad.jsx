@@ -17,6 +17,7 @@ const HubCad = () => {
 					icon={CadImg}
 					color="blue"
 					path="skills/singleregister"
+					btTxt="Cadastrar"
 				/>
 				<CardsCad
 					title="Cadastro em massa"
@@ -24,6 +25,7 @@ const HubCad = () => {
 					icon={CadImg}
 					color="green"
 					path="skills/multiregister"
+					btTxt="Cadastrar"
 				/>
 				<CardsCad
 					title="Cadastro Admin"
@@ -32,6 +34,7 @@ const HubCad = () => {
 					icon={CadImg}
 					color="pink"
 					path="skills/adminregister"
+					btTxt="Cadastrar"
 				/>
 			</section>
 		</div>

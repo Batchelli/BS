@@ -199,7 +199,7 @@ const TurmaCri = () => {
 
 				</div>
 				<div className={styles.bt}>
-					<button style={{ border: `1px solid${color}`}} onClick={enviarDados}>Criar time</button>
+					<button style={{ backgroundColor: color	}} onClick={enviarDados}>Criar time</button>
 				</div>
 			</div>
 			<ToastContainer

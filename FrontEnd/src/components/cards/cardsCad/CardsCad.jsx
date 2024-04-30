@@ -2,7 +2,7 @@ import React from "react";
 import styles from "./CardsCad.module.css";
 import { useNavigate } from "react-router-dom";
 
-const CardsCad = ({ title, desc, icon, color, descI, path}) => {
+const CardsCad = ({ title, desc, icon, color, descI, path, btTxt }) => {
 	let cor;
 	if (color === "blue") {
 		cor = styles.blue;
@@ -24,18 +24,18 @@ const CardsCad = ({ title, desc, icon, color, descI, path}) => {
 	return (
 		<div className={styles.card}>
 			<div className={styles.cardImg}>
-				<img src={icon} alt="Card Img"  id={`${cor}`}/>
+				<img src={icon} alt="Card Img" id={`${cor}`} />
 			</div>
 			<div className={styles.title}>
 				<h1>{title}</h1>
 			</div>
 			<div className={styles.desc}>
-				<p>{desc}</p> 
-				<p className={styles.warn}>{descI}</p> 
+				<p>{desc}</p>
+				<p className={styles.warn}>{descI}</p>
 			</div>
-      <div className={styles.bts}>
-        <button className={styles.bt} onClick={btCad}>Entrar</button>
-      </div>
+			<div className={styles.bts}>
+				<button className={styles.bt} onClick={btCad}>{btTxt}</button>
+			</div>
 		</div>
 	);
 };

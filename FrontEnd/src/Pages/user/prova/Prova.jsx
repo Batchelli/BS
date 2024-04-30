@@ -11,22 +11,23 @@ import "react-toastify/dist/ReactToastify.css";
 const Prova = () => {
   const [provaData, setProvaData] = useState([]);
   const [selectedOptions, setSelectedOptions] = useState({});
-  const [resposta, setResposta] = useState([])
+  const [resposta, setResposta] = useState([]);
 
-  const handleCheckboxChange = (event, index, idx) => {
-    const { name, checked } = event.target;
+  const handleRadioChange = (event, index, idx) => {
+    const { value } = event.target;
     setSelectedOptions(prevState => ({
       ...prevState,
-      [name]: {
-        alternativa: checked ? provaData[index].perguntas[idx].alternativas : '',
-        correta: provaData[index].perguntas[idx].respostaCerta
+      [`questao_${index}`]: {
+        alternativa: value,
+        correta: provaData[index].perguntas[idx].respostaCerta,
+        questaoIndex: index
       }
     }));
   };
 
   const request = async () => {
     try {
-      const response = await axios.get(`${api}/provas/Prova/2`, {
+      const response = await axios.get(`${api}/provas/Prova/3`, {
         params: {
           percentage: "100"
         }
@@ -55,23 +56,37 @@ const Prova = () => {
     request();
   }, []);
 
-  const EnviarResposta = async () => {
-    try {
-    
-      const response = await axios.get(`${api}/provas/verificar_resposta`, {
-        params: {
-          resposta: resposta
-        }
-      });
-      // Aqui você deve implementar a lógica para verificar as respostas
-      // e enviar para o backend para processamento
-      toast.success("Resposta está correta.", { position: "top-right" });
-    } catch (error) {
-      console.error("Erro ao enviar dados:", error);
-      toast.error("A alternativa está errada.", { position: "top-right" });
-    }
+  const [showContent, setShowContent] = useState(false);
+
+  const handleClick = () => {
+    setShowContent(true);
+    verificarRespostasCorretas();
   };
 
+  const [numeroRespostasCorretas, setNumeroRespostasCorretas] = useState(0);
+  const handleRespostaCorreta = () => {
+    setNumeroRespostasCorretas(prevCount => prevCount + 1);
+  };
+
+  const verificarRespostasCorretas = () => {
+    // Lógica para verificar respostas corretas e contar o número de respostas corretas
+    Object.entries(selectedOptions).forEach(([key, value]) => {
+      if (!value.correta) {
+        // Se a resposta estiver errada, mostrar tanto a resposta errada quanto a correta
+        const questaoIndex = parseInt(key.split('_')[1]);
+        const questao = provaData[questaoIndex];
+        setResposta(prevState => ({
+          ...prevState,
+          [`questao_${questaoIndex}`]: {
+            alternativaErrada: value.alternativa,
+            respostaCerta: questao.perguntas.find(pergunta => pergunta.respostaCerta).alternativas
+          }
+        }));
+      } else {
+        setNumeroRespostasCorretas(prevCount => prevCount + 1);
+      }
+    });
+  };
 
   return (
     <div className={styles.container}>
@@ -84,8 +99,12 @@ const Prova = () => {
               {prova.perguntas.map((pergunta, idx) => (
                 <li key={idx}>
                   <label>
-                    <input type="checkbox" name={`questao_${index}_alternativa_${idx}`}
-                      onChange={(event) => handleCheckboxChange(event, index, idx)} />
+                    <input
+                      type="radio"
+                      name={`questao_${index}`}
+                      value={pergunta.alternativas}
+                      onChange={(event) => handleRadioChange(event, index, idx)}
+                    />
                     {pergunta.alternativas}
                   </label>
                 </li>
@@ -94,21 +113,41 @@ const Prova = () => {
           </div>
         ))}
       </div>
-      <button onClick={EnviarResposta}>Enviar Respostas</button>
 
       <h4>Seleções do usuário:</h4>
-      <ul>
-        {Object.entries(selectedOptions).map(([key, value]) => (
-          <li key={key}>
-            {value.alternativa}
-            {value.correta ? (
-              <h1>Resposta correta</h1>
-            ) : (
-              <h1>Resposta errada</h1>
-            )}
-          </li>
-        ))}
-      </ul>
+      <div>
+        <div>
+          <button onClick={handleClick}>Mostrar Conteúdo</button>
+          {showContent && (
+            <ul>
+              {showContent && (
+                <ul>
+                  {Object.entries(selectedOptions).map(([key, value]) => {
+                    const questaoIndex = parseInt(key.split('_')[1]);
+                    const questao = provaData[questaoIndex];
+                    return (
+                      <li key={key}>
+                        <p><strong>Questão {questaoIndex + 1}:</strong> {questao ? questao.enunciado : 'Enunciado não encontrado'}</p>
+                        <p>Alternativa selecionada: {value.alternativa}</p>
+                        {value.correta ? (
+                          <h1>Resposta correta</h1>
+                        ) : (
+                          <>
+                            <h1>Resposta errada</h1>
+                            <p>Alternativa errada: {resposta[`questao_${questaoIndex}`].alternativaErrada}</p>
+                            <p>Resposta correta: {resposta[`questao_${questaoIndex}`].respostaCerta}</p>
+                          </>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </ul>
+          )}
+          <p>Número de respostas corretas: {numeroRespostasCorretas}</p>
+        </div>
+      </div>
     </div>
   );
 };

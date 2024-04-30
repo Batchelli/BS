@@ -68,7 +68,7 @@
 
 .bts {
 	width: 90%;
-	height: 35%;
+	height: 45%;
 	display: flex;
     flex-direction: column;
 	align-items: center;
@@ -78,7 +78,7 @@
 .bt {
 	width: 215px;
 	height: 70px;
-	font-size: 18px;
+	font-size: 16px;
 
 	background-color: #007bc0;
 	border: 0;
@@ -91,6 +91,10 @@
 .bt:hover {
 	transform: scale(1.01);
 	filter: brightness(120%);
+}
+
+.bts p{
+	text-align: center;
 }
 
 @media only screen and (max-width: 1366px) {

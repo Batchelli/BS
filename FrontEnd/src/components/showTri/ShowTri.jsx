@@ -59,7 +59,7 @@ const ShowTri = ({ showTrilha }) => {
                         </div>
                         <div className={styles.txt}>
                             <h4>Porcentagem Concluida:</h4>
-                            <p>50 Horas</p>
+                            <p>0%</p>
                         </div>
                         <div className={styles.txt}>
                             <h4>Carga Horaria:</h4>

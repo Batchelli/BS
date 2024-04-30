@@ -17,6 +17,7 @@ const HubTri = () => {
 					icon={TriIcon}
 					color="blue"
 					path="skills/criartrilha"
+					btTxt="Criar"
 				/>
 				<Dbt
 					title="Adicionar a Trilha"

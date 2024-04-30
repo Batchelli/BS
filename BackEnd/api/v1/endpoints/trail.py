@@ -31,11 +31,7 @@ async def post_trail(trail: TrailSchema, db: AsyncSession = Depends(get_session)
                         carga_horaria = trail.carga_horaria,
                         conteudo = trail.conteudo,
                         image_trail= trail.image_trail,
-<<<<<<< HEAD
                         id_prova = 1
-=======
-                        id_prova= trail.id_prova
->>>>>>> 5cd031830c9a7c0ede23d570d19d68da66526286
     )
     db.add(new_trail)
     await db.commit()

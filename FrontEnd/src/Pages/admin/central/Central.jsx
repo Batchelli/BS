@@ -23,10 +23,6 @@ const Central = () => {
   const decodedToken = jwtDecode(token);
 
   const pos = () => {
-    setCentralTeam([])
-    setCentralTrail([])
-    setSelectedTeams([])
-    setSelectedTrail([])
     setHoveredTeam([])
     setHoveredTrail([])
   }
@@ -45,7 +41,7 @@ const Central = () => {
 
   const trail = async () => {
     try {
-      const response = await axios.get(`${api}/trail/trailsByCreator/${decodedToken.edv}`)
+      const response = await axios.get(`${api}/trail/trails_creator/${decodedToken.edv}`)
       const trailData = response.data.map((item) => ({
         Nome: item.nome || "N/A",
         Id: item.id || "N/A",

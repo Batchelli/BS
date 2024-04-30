@@ -6,6 +6,9 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import api from '../../../api';
+import cadAberto from "../../../components/assets/cadFec.svg"
+import back from "../../../components/assets/backFirst.svg"
+
 
 
 const FirstAcessUser = () => {
@@ -18,44 +21,29 @@ const FirstAcessUser = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const edvUser = location.state && location.state.edvUser;
+  const color = localStorage.getItem("color")
 
   const confirmEmail = async (e) => {
-    console.log("função email")
     e.preventDefault();
-    console.log("OI oi");
-    console.log(edvUser)
+    console.log("Edv logado:" + edvUser)
 
     try {
+
       const emailConfirm = await axios.post(
         `${api}/email/email`,
         {
           email: email,
-          edv: "0", //MUDAR P EDV RECEBEDENDO O PARÂMETRO DO EDV ASSIM QUE O USUÁRIO LOGAR
+          edv: edvUser, 
         }
       );
+      toast.success('Código enviado com sucesso',);
 
-      toast.success('Usuário cadastrado com sucesso', {
-        position: "top-right",
-        autoClose: 1500,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+    
+
+
     } catch (error) {
       console.error("Erro na requisição:", error);
-      toast.error('Usuário não cadastrado', {
-        position: "top-right",
-        autoClose: 1500,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      toast.error('Usuário não cadastrado',);
     }
 
   }
@@ -63,6 +51,10 @@ const FirstAcessUser = () => {
   const newPassword = async (e) => {
     console.log("edv", edvUser)
     e.preventDefault();
+    const getUser = await axios.get(
+      `${api}/users/user/${edvUser}`, 
+    );
+    console.log("teste " + getUser.data.typeUser)
     if (password === confirmPass) {
       setSenhaVerificada(true);
       if (confirmPass == "" || senhaVerificada == "") {
@@ -80,9 +72,25 @@ const FirstAcessUser = () => {
       }
       else {
         try {
+          console.log("")
+          const NewDataUser = await axios.put(`${api}/users/updatePassword/${edvUser}`, {
+            name: "",
+            edv: edvUser, //edv verdadeiro do usuário
+            email_user: email,
+            user_area: "",
+            focal_point: "",
+            admin_email: "",
+            percentage: 0,
+            typeUser: "",
+            is_activate: true,
+            hashed_password: password,
+            image_user: ""
+
+          });
+          
           toast.success('Senha alterada com sucesso', {
             position: "top-right",
-            autoClose: 2500,
+            autoClose: 2100,
             hideProgressBar: false,
             closeOnClick: true,
             pauseOnHover: true,
@@ -93,47 +101,26 @@ const FirstAcessUser = () => {
               setConfirmPass('');
               setPassword('');
               setTimeout(() => {
-                //navigate('/Trilhas',  { state: { edvUser: edv } });
-              }, 3500);
+                if (getUser.data.typeUser == "Admin"){
+                  navigate("/skills/hubadmin");
+                }else{
+                  navigate('/skills/hubtrilhas',{ state: { edvUser: edvUser } } );
+                }
+
+                // navigate('/skills/hubtrilhas', ); // { state: { edvUser: edv } }
+              });
             },
-          });
-
-          console.log("")
-          const NewDataUser = await axios.put(`${api}/users/updatePassword/${edvUser}`, {
-            name: "",
-            edv: edvUser,
-            email_user: email,
-            user_area: "string",
-            focal_point: "string",
-            admin_email: "string",
-            percentage: 0,
-            typeUser: "string",
-            is_activate: false,
-            hashed_password: password
-
           });
           setConfirmPass('');
           setPassword('');
           setEmail('');
 
-
-          
         } catch (error) {
           console.error('Erro na requisição:', error);
         }
       }
     } else {
-      toast.error('Senhas não coincidem', {
-        position: "top-right",
-        autoClose: 1500,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-      
+      toast.error('Senhas não coincidem');
       console.log("senhas não coincidem")
       setSenhaVerificada(false);
     }
@@ -145,7 +132,8 @@ const FirstAcessUser = () => {
       //Após o acesso ser permitido deve-se aparecer os campos para colocar a senha
       const getCode = await axios.get(`${api}/email/getcode/`, {
       })
-   
+     
+      
       if (codigo == getCode.data) {
         console.log("acesso permitido", getCode.data)
 
@@ -200,14 +188,10 @@ const FirstAcessUser = () => {
   }
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} style={{ backgroundColor: color }}>
 
       <div className={styles.divs}>
         <div className={styles.backImg}>
-
-
-
-
           <div className={styles.contInfo}>
             <p className={styles.pBranco}>Enviaremos um código de verificação para o seu e-mail e a partir disso será possível alterar sua senha.</p>
             <label htmlFor="" className={styles.label} >E-mail</label>
@@ -231,7 +215,7 @@ const FirstAcessUser = () => {
         <div className={styles.token}>
           <div className={styles.infos}>
             <div className={styles.rightCenter}>
-              <img src='' className={styles.cadeado} alt="" />
+              <img src={cadAberto} className={styles.cadeado} alt="" />
               <br />
               {/* <img src={cadeadoFechado} alt="" /> */}
               <label htmlFor="" className={styles.labelR} >Digite o código de verificação</label>

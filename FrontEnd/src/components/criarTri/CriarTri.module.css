@@ -251,26 +251,28 @@
 }
 
 .btSave {
-	width: 350px;
-	height: 75px;
+	width: 175px;
+	height: 70px;
 	margin: 25px;
-	font-size: 36px;
-	font-weight: bold;
+	font-size: 18px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background-color: #007BC0;
-	border: 0;
+	background-color: #fff;
 	border-radius: 8px;
+	border: 0;
 	color: white;
 	transition: all 0.2s ease-in-out;
 	cursor: pointer;
+	z-index: 10;
 }
 
 .btSave:hover {
 	filter: brightness(120%);
 	transform: scale(1.02);
 }
+
+
 
 #asTri {
 	font-size: 26px;
@@ -362,6 +364,7 @@
 	width: 100%;
 	display: flex;
 	flex-direction: row-reverse;
+	align-items: flex-end;
 	position: absolute;
 }
 
@@ -399,7 +402,7 @@
 	cursor: pointer;
 }
 
-.btExP{
+.btExP {
 	width: 30px;
 	height: 30px;
 	border: 2px solid #e8f1ff;
@@ -417,15 +420,15 @@
 }
 
 @media only screen and (max-width: 1570px) {
-	.contbtshow {
+	/* .contbtshow {
 		top: 550px;
-	}
+	} */
 }
 
 @media only screen and (max-width: 1180px) {
-	.contbtshow {
+	/* .contbtshow {
 		top: 900px;
-	}
+	} */
 
 	.contHeader {
 		flex-direction: column;

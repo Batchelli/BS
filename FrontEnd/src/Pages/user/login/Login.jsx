@@ -15,6 +15,7 @@ const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const { setTypeValue } = useType();
+  const edvUser = location.state && location.state.edvUser;
 
     useEffect(() => {
       localStorage.removeItem("token");
@@ -29,20 +30,37 @@ const Login = () => {
           username: username,
           password: password,
         });
+        const responseActive = await axios.get(`${api}/users/user/${username}`, {
+        
+        });
         if (response.data.access_token) {
           const dataUser = await axios.get(`${api}/users/user/${username}`, {})
           setTypeValue(dataUser.data.typeUser);
+          console.log("resposta " +responseActive.data.is_activate )
+
 
           if (dataUser.data.typeUser === "Admin" || dataUser.data.typeUser === "SAdmin") {
             toast.success("Logado como admin!", {
               onClose: () => {
-                navigate("/skills/hubadmin");
-              },
+                if(responseActive.data.is_activate == false ){
+                  navigate("/skills/first",{ state: { edvUser: username } }) //Primeiro acesso
+                
+              }else{
+                console.log(response.data)
+                navigate("/skills/hubadmin", { state: { edvUser: username } });
+              }}
+              ,
             });
           } else {
             toast.success("Logado como user!", {
               onClose: () => {
-                navigate("/skills/hubtrilhas");
+                if (responseActive.data.is_activate == false ){
+               
+                  navigate("/skills/first", { state: { edvUser: username } }) //Primeiro acesso
+                }
+                else{
+                navigate("/skills/hubtrilhas", { state: { edvUser: username } });
+              }
               },
             });
           }
@@ -86,15 +104,16 @@ const Login = () => {
               />
             </div>
           </div>
-          <div className={styles.cad}>
-            <p>
-              <Link to="/skills/singleregister">Esqueci a senha</Link>
-            </p>
-          </div>
+         
           <div className={styles.bts}>
             <button className={styles.bt}>
               <h1>Entrar</h1>
             </button>
+          </div>
+          <div className={styles.cad}>
+            <p>
+              <Link to="/skills/fpass">Esqueci a senha</Link>
+            </p>
           </div>
         </form>
         <ToastContainer

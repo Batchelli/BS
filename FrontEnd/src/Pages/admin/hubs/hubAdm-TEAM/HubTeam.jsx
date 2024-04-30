@@ -17,6 +17,7 @@ const HubTeam = () => {
 					icon={TeamIcon}
 					color="blue"
 					path="skills/criartime"
+					btTxt="Criar"
 				/>
 				<CardsCad
 					title="Visualizar Times"
@@ -24,6 +25,7 @@ const HubTeam = () => {
 					icon={TeamIcon}
 					color="pink"
 					path="skills/teams"
+					btTxt="Visualizar"
 				/>
 			</section>
 		</div>

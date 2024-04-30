@@ -250,14 +250,6 @@ const CriarTri = () => {
 			{showLinkModal && (
 				<LinkModal onClose={closeLinkModal} onSave={saveLink} />
 			)}
-			<div className={styles.contbtshow}>
-				{showTri == true && (
-					<button className={styles.btshow} onClick={showAsNormal} style={{ border: `1px solid ${color}` }}>Voltar a edição</button>
-				)}
-				{showTri == false && (
-					<button className={styles.btshow} onClick={showAsTri} style={{ border: `1px solid ${color}` }}>Visualizar como trilha</button>
-				)}
-			</div>
 			{showTri == false && (
 				<div className={styles.contHeader}>
 					<div className={styles.contImg}>
@@ -397,7 +389,7 @@ const CriarTri = () => {
 									+
 								</button>
 							</div>
-							<div className={styles.textsTri}>
+							{/* <div className={styles.textsTri}>
 								<h1>{elemento.titulo}</h1>
 							</div>
 							{elemento.topicos.map((paragrafo, topicoIndex) => (
@@ -410,7 +402,7 @@ const CriarTri = () => {
 										<span>{paragrafo.texto}</span>
 									)}
 								</li>
-							))}
+							))} */}
 						</VerticalTimelineElement>
 					))}
 					<div className={styles.bt}>
@@ -426,9 +418,17 @@ const CriarTri = () => {
 				</div>
 			)}
 			<div className={styles.saveTri}>
-				<button className={styles.btSave} onClick={enviarDados}>
+				<button className={styles.btSave} onClick={enviarDados} style={{backgroundColor: color}}>
 					Salvar Trilha
 				</button>
+				<div className={styles.contbtshow}>
+					{showTri == true && (
+						<button className={styles.btshow} onClick={showAsNormal} style={{ border: `1px solid ${color}` }}>Voltar a edição</button>
+					)}
+					{showTri == false && (
+						<button className={styles.btshow} onClick={showAsTri} style={{ border: `1px solid ${color}` }}>Visualizar como trilha</button>
+					)}
+				</div>
 			</div>
 			{load == true && (
 				<LoadinPage />
