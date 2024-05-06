@@ -1,7 +1,8 @@
 #Este arquivo é responsável por criar as tabelas no banco de dados
 import sys
 # default_path = "C:\\Users\\51954963823\\Desktop\\BoschSkills\\BackEnd"
-default_path = "C:\\Users\\lucas\\OneDrive\\Documentos\\Bs\\BoschSkills\\BackEnd"
+# default_path = "C:\\Users\\lucas\\OneDrive\\Documentos\\Bs\\BoschSkills\\BackEnd"
+default_path = "C:\\Users\\blu4ca\\Deskto\\BS\\BackEnd"
 sys.path.append(default_path)
 
 
