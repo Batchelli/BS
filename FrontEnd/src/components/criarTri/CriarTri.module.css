@@ -243,17 +243,17 @@
 }
 
 .saveTri {
+	margin: 25px;
 	width: 100%;
+	max-width: 1180px;
 	display: flex;
-	flex-direction: column;
 	align-items: center;
-	justify-content: center;
+	justify-content: space-between;
 }
 
 .btSave {
 	width: 175px;
 	height: 70px;
-	margin: 25px;
 	font-size: 18px;
 	display: flex;
 	align-items: center;
@@ -361,7 +361,7 @@
 }
 
 .contbtshow {
-	width: 100%;
+	width: 65%;
 	display: flex;
 	flex-direction: row-reverse;
 	align-items: flex-end;
@@ -371,7 +371,6 @@
 .btshow {
 	width: 175px;
 	height: 70px;
-	margin: 25px;
 	font-size: 18px;
 	display: flex;
 	align-items: center;
@@ -419,10 +418,46 @@
 	color: #fff;
 }
 
+.closeModal {
+	z-index: 20;
+	position: absolute;
+	display: flex;
+	justify-content: end;
+	height: 100vh;
+	width: 100%;
+	top: 0;
+	left: 0;
+}
+
+.btCloseModal {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 30px;
+	font-weight: bold;
+	width: 50px;
+	height: 50px;
+	background-color: transparent;
+	color: red;
+	border: transparent;
+	cursor: pointer;
+}
+
+.bodyModalProva{
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 10;
+	position: fixed;
+	background-color: #5757578c;
+}
+
 @media only screen and (max-width: 1570px) {
-	/* .contbtshow {
-		top: 550px;
-	} */
+	.contbtshow {
+		width: 94%;
+	}
 }
 
 @media only screen and (max-width: 1180px) {

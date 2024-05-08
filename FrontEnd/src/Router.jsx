@@ -29,7 +29,7 @@ import FirstAcessUser from "./Pages/user/FirstAcessUser/FirstAcessUser.jsx";
 import UserPerfil from "./Pages/user/userPerfil/UserPerfil.jsx";
 
 import Prova from "./Pages/user/prova/Prova.jsx";
-import MakeTest from "./Pages/admin/makeTest/MakeTest.jsx";
+import MakeTest from "./components/modal/makeTest/MakeTest.jsx";
 
 
 const ProtectedRoute = ({ element, allowedUserTypes }) => {

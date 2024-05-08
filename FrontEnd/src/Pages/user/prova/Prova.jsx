@@ -27,7 +27,7 @@ const Prova = () => {
 
   const request = async () => {
     try {
-      const response = await axios.get(`${api}/provas/Prova/3`, {
+      const response = await axios.get(`${api}/provas/Prova/4`, {
         params: {
           percentage: "100"
         }

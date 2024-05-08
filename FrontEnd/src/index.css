@@ -5,3 +5,15 @@ body, html{
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
 }
+/* 
+body::-webkit-scrollbar {
+	width: 14px;
+}
+
+body::-webkit-scrollbar-track {
+	background: rgb(209, 209, 209);
+}
+
+body::-webkit-scrollbar-thumb {
+	background-color: #b5b5b5;
+} */

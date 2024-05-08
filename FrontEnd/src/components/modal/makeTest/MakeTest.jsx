@@ -1,18 +1,12 @@
 import React, { useState, useEffect } from "react";
 import styles from "./MakeTest.module.css";
-
-import { HiOutlinePencilAlt } from "react-icons/hi";
 import axios from "axios";
 import api from "../../../api";
-
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-import Input from "../../../components/inputs/inputText/Input";
-
 import { jwtDecode } from "jwt-decode";
 
-import Navbar from "../../../components/navbar/Navbar";
+import Alert from "/src/components/assets/alert-Black.svg";
 
 const MakeTest = () => {
   const [elements, setElements] = useState([
@@ -28,10 +22,20 @@ const MakeTest = () => {
   const [nome_prova, setNomeP] = useState("");
   const [criador_prova, setCriadorP] = useState("");
 
+  const [modalAlert, setModalAlert] = useState(false);
+
   const token = localStorage.getItem("token");
   const decodedToken = jwtDecode(token);
 
   const color = localStorage.getItem("color");
+
+  useEffect(() => {
+    setModalAlert(true);
+  }, []);
+
+  const closeAlert = () => {
+    setModalAlert(false);
+  };
 
   const addElemento = () => {
     if (elements.length >= 10) {
@@ -65,7 +69,7 @@ const MakeTest = () => {
       toast.error("Você atingiu o número máximo de opções por questão (5).", {
         position: "top-right",
       });
-      return; 
+      return;
     }
     const novosElementos = [...elements];
     novosElementos[index].topicos.push({ texto: "", link: false });
@@ -114,10 +118,10 @@ const MakeTest = () => {
         valor_prova: 10,
         tempoRealizar: 19,
       });
-      toast.success("Trilha criada com sucesso.", { position: "top-right" });
+      toast.success("Provada criada com sucesso.", { position: "top-right" });
     } catch (error) {
       console.error("Erro ao enviar dados:", error);
-      toast.error("Erro ao criar a trilha. Tente novamente mais tarde.", {
+      toast.error("Erro ao criar a prova. Tente novamente mais tarde.", {
         position: "top-right",
       });
     }
@@ -137,91 +141,111 @@ const MakeTest = () => {
 
   return (
     <div className={styles.container}>
-      <Navbar />
-      {elements.map((elemento, index) => (
-        <div
-          className={styles.quest}
-          key={index}
-          style={{ border: `2px solid ${color}` }}
-        >
-          <div className={styles.btClose}>
-            <button
-              className={styles.btExcluir}
-              onClick={() => excluirElemento(index)}
-            >
-              ✖
-            </button>
-          </div>
-          <div className={styles.contTitulos}>
-            <div className={styles.inpsTri}>
-              <input
-                className={styles.inpEnun}
-                type="text"
-                placeholder="Enunciado"
-                value={elemento.titulo}
-                onChange={(e) => enunciados(e, index)}
-                id="titulo"
-              />
+      <div className={styles.modalBody}>
+        {elements.map((elemento, index) => (
+          <div
+            className={styles.quest}
+            key={index}
+            style={{ border: `2px solid ${color}` }}
+          >
+            <div className={styles.btClose}>
+              <button
+                className={styles.btExcluir}
+                onClick={() => excluirElemento(index)}
+              >
+                ✖
+              </button>
             </div>
-          </div>
+            <div className={styles.contTitulos}>
+              <div className={styles.inpsTri}>
+                <input
+                  className={styles.inpEnun}
+                  type="text"
+                  placeholder="Enunciado"
+                  value={elemento.titulo}
+                  onChange={(e) => enunciados(e, index)}
+                  id="titulo"
+                />
+              </div>
+            </div>
 
-          {elemento.topicos.map((paragrafo, topicoIndex) => (
-            <div key={topicoIndex}>
-              <div className={styles.contItens}>
-                <div className={styles.ifLink}>
-                  <div className={styles.inpsTri} id={styles.inpOp}>
-                    <input
-                      className={styles.inpEnun}
-                      placeholder="Adicionar pergunta"
-                      value={paragrafo.texto}
-                      onChange={(e) => opcoes(e, index, topicoIndex)}
-                    />
-                    <button
-                      className={styles.btExP}
-                      onClick={() => excluirParagrafo(index, topicoIndex)}
-                    >
-                      🗑
-                    </button>
+            {elemento.topicos.map((paragrafo, topicoIndex) => (
+              <div key={topicoIndex}>
+                <div className={styles.contItens}>
+                  <div className={styles.ifLink}>
+                    <div className={styles.inpsTri} id={styles.inpOp}>
+                      <input
+                        className={styles.inpEnun}
+                        placeholder="Respostad"
+                        value={paragrafo.texto}
+                        onChange={(e) => opcoes(e, index, topicoIndex)}
+                      />
+                      <button
+                        className={styles.btExP}
+                        onClick={() => excluirParagrafo(index, topicoIndex)}
+                      >
+                        🗑
+                      </button>
+                    </div>
                   </div>
-                </div>
-                <div className={styles.check}>
-                  <div className={styles.cLink}>
-                    <input
-                      className={styles.checkB}
-                      type="checkbox"
-                      checked={paragrafo.link || false}
-                      onChange={(e) =>
-                        setChose(index, topicoIndex, e.target.checked)
-                      }
-                    />
-                    <p>Resposta correta</p>
+                  <div className={styles.check}>
+                    <div className={styles.cLink}>
+                      <input
+                        className={styles.checkB}
+                        type="checkbox"
+                        checked={paragrafo.link || false}
+                        onChange={(e) =>
+                          setChose(index, topicoIndex, e.target.checked)
+                        }
+                      />
+                      <p>Resposta correta</p>
+                    </div>
                   </div>
                 </div>
               </div>
+            ))}
+            <div className={styles.contBtAdd}>
+              <button className={styles.btAddItem} onClick={() => addOp(index)}>
+                Adicionar Opção
+              </button>
             </div>
-          ))}
-          <div className={styles.contBtAdd}>
-            <button className={styles.btAddItem} onClick={() => addOp(index)}>
-              Adicionar Opção
-            </button>
+          </div>
+        ))}
+        <div className={styles.bt}>
+          <button onClick={addElemento} className={styles.btAd}>
+            + Nova pergunta
+          </button>
+        </div>
+        <div className={styles.saveTri}>
+          <button
+            className={styles.btSave}
+            onClick={enviarDados}
+            style={{ backgroundColor: color }}
+          >
+            Criar prova
+          </button>
+        </div>
+      </div>
+      {modalAlert == true && (
+        <div className={styles.modalAlertBody}>
+          <div className={styles.alertBody}>
+            <div className={styles.alertSing}>
+              <img src={Alert} alt="" style={{ width: 50 }} />
+              <h3>AVISO</h3>
+            </div>
+            <div className={styles.descAlert}></div>
+            <p>
+              Caso você feche esta aba sem criar a prova seu progresso sera
+              perdido!
+            </p>
+            <div className={styles.closeAlert}>
+              <button className={styles.btExcluir} onClick={closeAlert}>
+                ✖
+              </button>
+            </div>
           </div>
         </div>
-      ))}
-      <div className={styles.bt}>
-        <button onClick={addElemento} className={styles.btAd}>
-          Nova pergunta
-        </button>
-      </div>
-      <div className={styles.saveTri}>
-        <button
-          className={styles.btSave}
-          onClick={enviarDados}
-          style={{ backgroundColor: color }}
-        >
-          Salvar Trilha
-        </button>
-      </div>
-
+      )}
       <ToastContainer
         position="top-right"
         autoClose={4000}
