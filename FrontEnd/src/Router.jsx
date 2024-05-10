@@ -30,6 +30,7 @@ import UserPerfil from "./Pages/user/userPerfil/UserPerfil.jsx";
 
 import Prova from "./Pages/user/prova/Prova.jsx";
 import MakeTest from "./components/modal/makeTest/MakeTest.jsx";
+import TriEdit from "./Pages/admin/triEdit/TriEdit.jsx";
 
 
 const ProtectedRoute = ({ element, allowedUserTypes }) => {
@@ -61,6 +62,8 @@ const Router = () => {
 					<Route element={<FirstAcessUser />} path="/skills/first"/>
 					<Route element={<MakeTest />} path="/skills/maketest"/>
 					<Route element={<Prova />} path="/skills/prova"/>
+
+					<Route element={<TriEdit />} path="/skills/editTri/:id"/>
 
 					<Route path="/skills/hubTrilhas" element={<ProtectedRoute element={<Hub />} allowedUserTypes={['SAdmin', 'Admin', 'User']} />} />
 					<Route path="/skills/trilha/:id" element={<ProtectedRoute element={<Trilha />} allowedUserTypes={['SAdmin', 'Admin', 'User']} />} />

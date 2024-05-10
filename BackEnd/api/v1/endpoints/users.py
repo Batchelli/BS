@@ -68,7 +68,7 @@ async def update_edv(user: UserSchema, db: AsyncSession = Depends(get_session)):
         user_to_update = result.scalar_one_or_none()
         if user_to_update:
             user_to_update.hashed_password = criptografia
-            user_to_update.is_activate = user.is_activate 
+            user_to_update.firstAcess = user.firstAcess 
             user_to_update.email_user = user.email_user
             await session.commit()
             return user_to_update

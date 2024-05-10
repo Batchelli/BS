@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styles from "./CriarTri.module.css";
-import {
-  VerticalTimeline,
-  VerticalTimelineElement,
-} from "react-vertical-timeline-component";
+import { VerticalTimeline, VerticalTimelineElement } from "react-vertical-timeline-component";
 import LinkModal from "../modal/modalLink/LinkModal";
-
 import { HiOutlinePencilAlt } from "react-icons/hi";
 import axios from "axios";
 import api from "../../api";
@@ -23,30 +19,43 @@ import MakeTest from "../modal/makeTest/MakeTest";
 
 const CriarTri = () => {
   const [elements, setElements] = useState([]);
-  const [novoTitulo, setNovoTitulo] = useState("");
-  const [showLinkModal, setShowLinkModal] = useState(false);
-  const [currentElementIndex, setCurrentElementIndex] = useState(null);
-  const [currenttopicoIndex, setCurrenttopicoIndex] = useState(null);
   const [nome, setNome] = useState("");
   const [desc, setDesc] = useState("");
   const [focal_point, setFocal] = useState("");
   const [cargaHora, setCargaHora] = useState("");
   const [image, setImage] = useState(null);
-  const [imageUrl, setImageUrl] = useState(null);
   const [showTri, setShowTri] = useState(false);
   const [load, setLoad] = useState(false);
+  const [showLinkModal, setShowLinkModal] = useState(false);
+  const [currentElementIndex, setCurrentElementIndex] = useState(null);
+  const [currenttopicoIndex, setCurrenttopicoIndex] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
   const [openProva, setOpenProva] = useState(false);
-  
+
   const token = localStorage.getItem("token");
   const decodedToken = jwtDecode(token);
-
   const color = localStorage.getItem("color");
+
+  useEffect(() => {
+    if (showTri) {
+      localStorage.setItem("trilha", JSON.stringify(elements));
+      localStorage.setItem("nome", nome);
+      localStorage.setItem("desc", desc);
+      localStorage.setItem("focal", focal_point);
+      localStorage.setItem("ch", cargaHora);
+      localStorage.setItem("imagem", image);
+    } else {
+      localStorage.removeItem("trilha");
+      localStorage.removeItem("nome");
+      localStorage.removeItem("desc");
+      localStorage.removeItem("focal");
+      localStorage.removeItem("ch");
+      localStorage.removeItem("imagem");
+    }
+  }, [showTri]);
 
   const pos = () => {
     setElements([]);
-    setNovoTitulo([]);
-    setCurrentElementIndex(null);
-    setCurrenttopicoIndex(null);
     setNome("");
     setDesc("");
     setFocal("");
@@ -55,33 +64,9 @@ const CriarTri = () => {
     setImageUrl(null);
   };
 
-  const showAsTri = () => {
-    setShowTri(true);
-    localStorage.setItem("trilha", JSON.stringify(elements));
-    localStorage.setItem("nome", nome);
-    localStorage.setItem("desc", desc);
-    localStorage.setItem("focal", focal_point);
-    localStorage.setItem("ch", cargaHora);
-    localStorage.setItem("imagem", image);
-  };
-
-  const showAsNormal = () => {
-    setShowTri(false);
-    localStorage.removeItem("trilha");
-    localStorage.removeItem("nome");
-    localStorage.removeItem("desc");
-    localStorage.removeItem("focal");
-    localStorage.removeItem("ch");
-    localStorage.removeItem("imagem");
-  };
-
   const addElemento = () => {
-    const novoElemento = {
-      titulo: novoTitulo,
-      topicos: [],
-    };
+    const novoElemento = { titulo: "", topicos: [] };
     setElements([...elements, novoElemento]);
-    setNovoTitulo("");
   };
 
   const setTitulos = (e, index) => {
@@ -120,13 +105,6 @@ const CriarTri = () => {
     setCurrenttopicoIndex(null);
   };
 
-  const openProvaModal = () => {
-    setOpenProva(true);
-  };
-  const closeProvaModal = () => {
-    setOpenProva(false);
-  };
-
   const saveLink = (link) => {
     const novosElementos = [...elements];
     novosElementos[currentElementIndex].topicos[currenttopicoIndex].link = link;
@@ -134,35 +112,35 @@ const CriarTri = () => {
     closeLinkModal();
   };
 
+  const openProvaModal = () => {
+    setOpenProva(true);
+  };
+
+  const closeProvaModal = () => {
+    setOpenProva(false);
+  };
+
   const enviarDados = async () => {
     setLoad(true);
     try {
       if (!image) {
-        toast.error("Nenhuma imagem selecionada para enviar.", {
-          position: "top-right",
-        });
+        toast.error("Nenhuma imagem selecionada para enviar.", { position: "top-right" });
         return;
       }
 
       if (elements.length === 0) {
-        toast.error("A trilha deve conter pelo menos um elemento.", {
-          position: "top-right",
-        });
+        toast.error("A trilha deve conter pelo menos um elemento.", { position: "top-right" });
         return;
       }
 
       for (const elemento of elements) {
         if (elemento.titulo.trim() === "") {
-          toast.error("O título de um ou mais elementos está vazio.", {
-            position: "top-right",
-          });
+          toast.error("O título de um ou mais elementos está vazio.", { position: "top-right" });
           return;
         }
         for (const topico of elemento.topicos) {
           if (topico.texto.trim() === "") {
-            toast.error("O texto de um ou mais tópicos está vazio.", {
-              position: "top-right",
-            });
+            toast.error("O texto de um ou mais tópicos está vazio.", { position: "top-right" });
             return;
           }
         }
@@ -186,6 +164,7 @@ const CriarTri = () => {
           link: topico.link || false,
         })),
       }));
+
       await axios.post(`${api}/trail/createTrail`, {
         nome: nome,
         desc: desc,
@@ -196,6 +175,7 @@ const CriarTri = () => {
         image_trail: url,
         id_prova: 1,
       });
+
       toast.success("Trilha criada com sucesso.", { position: "top-right" });
       setLoad(false);
       setShowTri(false);
@@ -203,9 +183,7 @@ const CriarTri = () => {
     } catch (error) {
       console.error("Erro ao enviar dados:", error);
       setLoad(false);
-      toast.error("Erro ao criar a trilha. Tente novamente mais tarde.", {
-        position: "top-right",
-      });
+      toast.error("Erro ao criar a trilha. Tente novamente mais tarde.", { position: "top-right" });
     }
   };
 
@@ -246,41 +224,28 @@ const CriarTri = () => {
 
   const excluirElemento = (index) => {
     const novosElementos = [...elements];
-    novosElementos.splice(index, 1); // Remove o elemento na posição 'index'
+    novosElementos.splice(index, 1);
     setElements(novosElementos);
   };
 
   const excluirParagrafo = (elementIndex, paragrafoIndex) => {
     const novosElementos = [...elements];
-    novosElementos[elementIndex].topicos.splice(paragrafoIndex, 1); // Remove o parágrafo na posição 'paragrafoIndex' do elemento na posição 'elementIndex'
+    novosElementos[elementIndex].topicos.splice(paragrafoIndex, 1);
     setElements(novosElementos);
   };
 
   return (
     <div className={styles.container}>
-      {showLinkModal && (
-        <LinkModal onClose={closeLinkModal} onSave={saveLink} />
-      )}
-      {showTri == false && (
+      {showLinkModal && <LinkModal onClose={closeLinkModal} onSave={saveLink} />}
+      {!showTri && (
         <div className={styles.contHeader}>
           <div className={styles.contImg}>
-            <InputImg
-              onChange={setArquivo}
-              onClick={getArquivo}
-              id="fileInput"
-              image={image}
-            />
+            <InputImg onChange={setArquivo} onClick={getArquivo} id="fileInput" image={image} />
           </div>
           <div className={styles.contInps}>
             <div className={styles.inputs}>
               <div className={styles.inps}>
-                <Input
-                  placeholder="Titulo:"
-                  type="text"
-                  value={nome}
-                  onChange={(e) => setNome(e.target.value)}
-                  id="nome"
-                />
+                <Input placeholder="Titulo:" type="text" value={nome} onChange={(e) => setNome(e.target.value)} id="nome" />
               </div>
             </div>
             <div className={styles.descH}>
@@ -295,109 +260,49 @@ const CriarTri = () => {
             </div>
             <div className={styles.inputs}>
               <div className={styles.inps} id={styles.fp}>
-                <Input
-                  placeholder="Focal Point:"
-                  onChange={(e) => setFocal(e.target.value)}
-                  type="text"
-                  value={focal_point}
-                  id="focalpoint"
-                />
+                <Input placeholder="Focal Point:" onChange={(e) => setFocal(e.target.value)} type="text" value={focal_point} id="focalpoint" />
               </div>
               <div className={styles.inps} id={styles.ch}>
-                <Input
-                  placeholder="Carga Horária:"
-                  type="number"
-                  onChange={(e) => setCargaHora(e.target.value)}
-                  value={cargaHora}
-                  id="cargaHora"
-                />
+                <Input placeholder="Carga Horária:" type="number" onChange={(e) => setCargaHora(e.target.value)} value={cargaHora} id="cargaHora" />
               </div>
             </div>
           </div>
         </div>
       )}
-      {showTri == false && (
+      {!showTri && (
         <VerticalTimeline className={styles.tColor}>
           {elements.map((elemento, index) => (
             <VerticalTimelineElement
               key={index}
-              contentStyle={{
-                background: "#007BC0",
-                color: "#fff",
-                boxShadow: "0px 0px 0px 0px",
-              }}
+              contentStyle={{ background: "#007BC0", color: "#fff", boxShadow: "0px 0px 0px 0px" }}
               contentArrowStyle={{ borderRight: "7px solid #007BC0" }}
-              iconStyle={{
-                background: "#007BC0",
-                color: "#fff",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-              icon={
-                <button
-                  className={styles.btExcluir}
-                  onClick={() => excluirElemento(index)}
-                >
-                  -
-                </button>
-              }
+              iconStyle={{ background: "#007BC0", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center" }}
+              icon={<button className={styles.btExcluir} onClick={() => excluirElemento(index)}>-</button>}
             >
               <div className={styles.contTitulos}>
                 <div className={styles.inpsTri}>
-                  <Input
-                    className={styles.inpTitulo}
-                    type="text"
-                    placeholder="Título"
-                    value={elemento.titulo}
-                    onChange={(e) => setTitulos(e, index)}
-                    id="titulo"
-                  />
+                  <Input className={styles.inpTitulo} type="text" placeholder="Título" value={elemento.titulo} onChange={(e) => setTitulos(e, index)} id="titulo" />
                 </div>
               </div>
-
               {elemento.topicos.map((paragrafo, topicoIndex) => (
                 <div key={topicoIndex}>
                   <div className={styles.contItens}>
                     <div className={styles.ifLink}>
                       <div className={styles.inpsTri} id={styles.inpTop}>
-                        <Input
-                          className={styles.itens}
-                          placeholder="Adicionar Texto"
-                          value={paragrafo.texto}
-                          onChange={(e) => setTextos(e, index, topicoIndex)}
-                        />
+                        <Input className={styles.itens} placeholder="Adicionar Texto" value={paragrafo.texto} onChange={(e) => setTextos(e, index, topicoIndex)} />
                       </div>
                       {paragrafo.link && (
                         <div>
-                          <button
-                            className={styles.btLink}
-                            onClick={() => openLinkModal(index, topicoIndex)}
-                          >
-                            <HiOutlinePencilAlt
-                              className={styles.iLink}
-                              size={30}
-                            />
+                          <button className={styles.btLink} onClick={() => openLinkModal(index, topicoIndex)}>
+                            <HiOutlinePencilAlt className={styles.iLink} size={30} />
                           </button>
                         </div>
                       )}
-                      <button
-                        className={styles.btExP}
-                        onClick={() => excluirParagrafo(index, topicoIndex)}
-                      >
-                        🗑
-                      </button>
+                      <button className={styles.btExP} onClick={() => excluirParagrafo(index, topicoIndex)}>🗑</button>
                     </div>
                     <div className={styles.check}>
                       <div className={styles.cLink}>
-                        <input
-                          className={styles.checkB}
-                          type="checkbox"
-                          checked={paragrafo.link || false}
-                          onChange={(e) =>
-                            setLink(index, topicoIndex, e.target.checked)
-                          }
-                        />
+                        <input className={styles.checkB} type="checkbox" checked={paragrafo.link || false} onChange={(e) => setLink(index, topicoIndex, e.target.checked)} />
                         <p>Link</p>
                       </div>
                     </div>
@@ -405,85 +310,33 @@ const CriarTri = () => {
                 </div>
               ))}
               <div className={styles.contBtAdd}>
-                <button
-                  className={styles.btAddItem}
-                  onClick={() => addParagrafo(index)}
-                >
-                  +
-                </button>
+                <button className={styles.btAddItem} onClick={() => addParagrafo(index)}>+</button>
               </div>
-              {/* <div className={styles.textsTri}>
-								<h1>{elemento.titulo}</h1>
-							</div>
-							{elemento.topicos.map((paragrafo, topicoIndex) => (
-								<li key={topicoIndex} className={styles.textsTri} id={styles.topicos}>
-									{paragrafo.link ? (
-										<a className={styles.links} href={paragrafo.link.toString()}>
-											{paragrafo.texto}
-										</a>
-									) : (
-										<span>{paragrafo.texto}</span>
-									)}
-								</li>
-							))} */}
             </VerticalTimelineElement>
           ))}
           <div className={styles.bt}>
-            <button onClick={addElemento} className={styles.btAd}>
-              +
-            </button>
+            <button onClick={addElemento} className={styles.btAd}>+</button>
           </div>
         </VerticalTimeline>
       )}
-      {showTri == true && (
+      {showTri && (
         <div className={styles.asTrail}>
-          <ShowTri showTrilha={showAsTri} />
+          <ShowTri showTrilha={setShowTri} />
         </div>
       )}
       <div className={styles.saveTri}>
-        <button
-          onClick={openProvaModal}
-          className={styles.btshow}
-          style={{ border: `1px solid ${color}` }}
-        >
-          Abrir Modal
-        </button>
-
-        <button
-          className={styles.btSave}
-          onClick={enviarDados}
-          style={{ backgroundColor: color }}
-        >
-          Salvar Trilha
-        </button>
-
-        {showTri == true && (
-          <button
-            className={styles.btshow}
-            onClick={showAsNormal}
-            style={{ border: `1px solid ${color}` }}
-          >
-            Voltar a edição
-          </button>
-        )}
-        {showTri == false && (
-          <button
-            className={styles.btshow}
-            onClick={showAsTri}
-            style={{ border: `1px solid ${color}` }}
-          >
-            Visualizar trilha
-          </button>
+        <button onClick={openProvaModal} className={styles.btshow} style={{ border: `1px solid ${color}` }}>Abrir Modal</button>
+        <button className={styles.btSave} onClick={enviarDados} style={{ backgroundColor: color }}>Salvar Trilha</button>
+        {!showTri && (
+          <button className={styles.btshow} onClick={() => setShowTri(true)} style={{ border: `1px solid ${color}` }}>Visualizar trilha</button>
         )}
       </div>
-      {load == true && <LoadinPage />}
-      {openProva == true && (
+      {load && <LoadinPage />}
+      {openProva && (
         <div className={styles.bodyModalProva}>
           <div className={styles.close}>
             <div className={styles.closeModal}>
-              <button className={styles.btCloseModal} onClick={closeProvaModal}>
-                ✖
-              </button>
+              <button className={styles.btCloseModal} onClick={closeProvaModal}>✖</button>
             </div>
           </div>
           <MakeTest />

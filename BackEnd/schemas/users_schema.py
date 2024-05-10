@@ -12,9 +12,10 @@ class UserSchema(SchemaBaseModel):
     admin_email : str 
     percentage : float
     typeUser: str 
-    is_activate : bool
-    hashed_password : str
+    firstAcess : bool
     image_user: Optional[str]
+    hashed_password : str
+    activated : bool
     class Config:
         from_attributes = True
 

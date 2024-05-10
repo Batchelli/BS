@@ -41,23 +41,29 @@ async def post_trail(trail: TrailSchema, db: AsyncSession = Depends(get_session)
 #Está função é destinada para o administrador poder mudar todas as seguintes informações da trilha: nome, descrição, focal point, carga horária e conteúdo
 @router.put('/updateTrailInfo/{trail_id}', response_model=TrailSchema, status_code=status.HTTP_202_ACCEPTED)
 async def update_trail_info(trail_id: int, updated_info: TrailSchema, db: AsyncSession = Depends(get_session)):
-    """Update user information (name and email) based on user_edv."""
+    """Update trail information based on trail_id."""
     async with db as session:
-        #Procura na tabela trilhas a trilha que tem o ID pesquisado
+        # Procurar a trilha no banco de dados pelo ID
         query = select(Trail).filter(Trail.id == trail_id)
         result = await session.execute(query)
         trail_to_update = result.scalar_one_or_none()
         
         if trail_to_update:
+            # Atualizar os campos da trilha com as informações fornecidas
             trail_to_update.nome = updated_info.nome
             trail_to_update.desc = updated_info.desc
             trail_to_update.focal_point = updated_info.focal_point
             trail_to_update.carga_horaria = updated_info.carga_horaria
             trail_to_update.conteudo = updated_info.conteudo
+            trail_to_update.image_trail = updated_info.image_trail
+            
+            # Salvar as alterações no banco de dados
             await session.commit()
+            
             return trail_to_update
         else:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="EDV not found")
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Trail not found")
+
         
 
 #Rota para trocar a foto do usuário

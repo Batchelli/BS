@@ -12,9 +12,3 @@ class ProvaSchema(SchemaBaseModel):
     conteudo_prova: str
     valor_prova: int
     tempoRealizar: int
-
-   
-  
-
-   
- 

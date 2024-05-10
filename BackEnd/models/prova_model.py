@@ -1,5 +1,5 @@
 from core.configs import settings
-from sqlalchemy import Column, Integer, String, JSON, LargeBinary
+from sqlalchemy import Column, Integer, String, Text
 
 class Provas(settings.DBBaseModel):
     __tablename__ = "Provas"
@@ -8,6 +8,4 @@ class Provas(settings.DBBaseModel):
     criador_prova = Column(String(400))
     valor_prova = Column(Integer)
     tempoRealizar = Column(Integer)
-    conteudo_prova = Column (String(1000000000))
-    valor_prova = Column(Integer)
-    tempoRealizar = Column(Integer)
+    conteudo_prova = Column(Text)

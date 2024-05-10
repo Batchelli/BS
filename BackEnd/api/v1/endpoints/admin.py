@@ -30,7 +30,8 @@ users = Table(
     Column('admin_email', String),
     Column('percentage', Float),
     Column('typeUser', String),
-    Column('is_activate', Boolean),
+    Column('firstAcess', Boolean),
+    Column('activated', Boolean),
     Column('hashed_password', String),
     Column('image_user', String)
 )
@@ -83,7 +84,8 @@ async def post_user(user: UserSchema, db: AsyncSession = Depends(get_session)):
                          admin_email = user.admin_email,
                          percentage = user.percentage,
                          typeUser = user.typeUser,
-                         is_activate = False,
+                         firstAcess = False,
+                         activated = True,
                          hashed_password = criptografia,
     )
     #Faz a inserção do usuário no banco
@@ -126,8 +128,9 @@ async def create_upload_file(file: UploadFile = File(...)):
                             admin_email=row['Email_Gestor'],
                             hashed_password=row['hashed_password'],
                             typeUser='User',
-                            is_activate=0,
+                            firstAcess=0,
                             percentage=0,
+                            actvated=1,
                             email_user='',
                             image_user='',
                         ))
@@ -147,8 +150,8 @@ async def redArchive(file: UploadFile = File(...)):
         content_io = BytesIO(content)
         df = pd.read_excel(content_io)
         df.columns = df.columns.str.lower()
-        df['is_activate'] = True
-        df['is_activate'] = df['is_activate'].astype(bool)
+        df['firstAcess'] = True
+        df['firstAcess'] = df['firstAcess'].astype(bool)
         df.rename(columns={'name': 'Nome', 'edv': 'Edv', 'user_area': 'Area', 'focal_point': 'Focal_Point', 'admin_email': 'Email_Gestor'}, inplace=True)
         print(df.to_dict(orient='records'))
         

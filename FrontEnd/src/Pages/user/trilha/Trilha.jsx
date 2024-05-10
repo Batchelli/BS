@@ -1,99 +1,82 @@
-import Navbar from "../../../components/navbar/Navbar";
-import styles from "./Trilha.module.css";
-
-import axios from "axios";
-import api from "../../../api";
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-
+import axios from "axios";
+import Navbar from "../../../components/navbar/Navbar";
 import {
   VerticalTimeline,
   VerticalTimelineElement,
 } from "react-vertical-timeline-component";
+import "react-vertical-timeline-component/style.min.css";
+import api from "../../../api";
+import styles from "./Trilha.module.css";
 
 const Trilha = () => {
-  const [nome, setNome] = useState('');
-  const [desc, setDesc] = useState('');
-  const [focalPoint, setFocalPoint] = useState('');
-  const [criador_trilha, setCriador_trilha] = useState('');
-  const [cargaHora, setCargaHora] = useState('');
-  const [image, setImage] = useState('');
-  const [conteudo, setConteudo] = useState('');
-  const [creator, setCreateor] = useState("");
-  const [isTri, setIsTri] = useState(false);
+  const { id } = useParams();
+  const [trilhaData, setTrilhaData] = useState({
+    nome: "",
+    desc: "",
+    focalPoint: "",
+    cargaHora: "",
+    image: "",
+    conteudo: "",
+  });
   const [trilhaSalva, setTrilhaSalva] = useState([]);
-
-  const { id } = useParams()
-
-  const get_data = async () => {
-    try {
-      const response = await axios.get(`${api}/trail/trails/${id}`);
-      console.log("OI oi");
-      if (response.data) {
-        console.log(response.data);
-        setNome(response.data[0].nome);
-        setDesc(response.data[0].desc);
-        setFocalPoint(response.data[0].focal_point);
-        setCargaHora(response.data[0].carga_horaria);
-        setImage(response.data[0].image_trail);
-
-        console.log(conteudo);
-
-        if (response.data[0].conteudo) {
-          setIsTri(true);
-          setConteudo(response.data[0].conteudo);
-          console.log("teste", isTri);
-        }
-      }
-    } catch (error) {
-      console.error("Erro na requisição da trilha:", error);
-      // toast.error("Usuário ou senha inválidos", {
-      //   position: "top-right",
-      //   autoClose: 1500,
-      //   hideProgressBar: false,
-      //   closeOnClick: true,
-      //   pauseOnHover: true,
-      //   draggable: true,
-      //   progress: undefined,
-      //   theme: "light",
-      // });
-    }
-  };
+  const [isTri, setIsTri] = useState(false);
 
   useEffect(() => {
-    get_data();
-  })
-
-
-  useEffect(() => {
-    if (conteudo) {
+    const fetchData = async () => {
       try {
-        const parsedConteudo = JSON.parse(conteudo);
+        const response = await axios.get(`${api}/trail/trails/${id}`);
+        if (response.data && response.data.length > 0) {
+          const data = response.data[0];
+          setTrilhaData({
+            nome: data.nome,
+            desc: data.desc,
+            focalPoint: data.focal_point,
+            cargaHora: data.carga_horaria,
+            image: data.image_trail,
+            conteudo: data.conteudo,
+          });
+          if (data.conteudo) {
+            setIsTri(true);
+          }
+        }
+      } catch (error) {
+        console.error("Erro na requisição da trilha:", error);
+      }
+    };
+
+    fetchData();
+  }, [id]);
+
+  useEffect(() => {
+    if (trilhaData.conteudo) {
+      try {
+        const parsedConteudo = JSON.parse(trilhaData.conteudo);
         setTrilhaSalva(parsedConteudo);
       } catch (error) {
         console.error("Erro ao analisar conteúdo da trilha:", error);
         setTrilhaSalva([]);
       }
     }
-  }, [conteudo]);
+  }, [trilhaData.conteudo]);
 
   return (
     <div className={styles.container}>
       <Navbar />
       <div className={styles.cont}>
-        <div className={styles.imgMask} style={{ backgroundImage: `url(${image})` }}></div>
+        <div className={styles.imgMask} style={{ backgroundImage: `url(${trilhaData.image})` }}></div>
         <div className={styles.texts}>
           <div className={styles.title}>
-            <h1>{nome}</h1>
+            <h1>{trilhaData.nome}</h1>
           </div>
           <div className={styles.desc}>
-            <p>{desc}</p>
+            <p>{trilhaData.desc}</p>
           </div>
-
           <div className={styles.infos}>
             <div className={styles.txt}>
               <h4>Focal Point:</h4>
-              <p>{focalPoint}</p>
+              <p>{trilhaData.focalPoint}</p>
             </div>
             <div className={styles.txt}>
               <h4>Porcentagem Concluida:</h4>
@@ -101,7 +84,7 @@ const Trilha = () => {
             </div>
             <div className={styles.txt}>
               <h4>Carga Horaria:</h4>
-              <p>{cargaHora} Horas</p>
+              <p>{trilhaData.cargaHora} Horas</p>
             </div>
           </div>
         </div>
@@ -126,7 +109,7 @@ const Trilha = () => {
                 {elemento.topicos.map((topico, topicoIndex) => (
                   <li key={topicoIndex} className={styles.textsTri} id={styles.topicos}>
                     {topico.link ? (
-                      <a href={topico.link} target="_blank" className={styles.links}>{topico.texto}</a>
+                      <a href={topico.link} target="_blank" rel="noopener noreferrer" className={styles.links}>{topico.texto}</a>
                     ) : (
                       <span>{topico.texto}</span>
                     )}

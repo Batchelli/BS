@@ -7,6 +7,8 @@ class CentralSchema(SchemaBaseModel):
     trail_id: int
     team_id: int
     percentage: int
+    grade: float
+    finished: bool
   
 class CentralTeamSchema(SchemaBaseModel):
     id: Optional[int] = None

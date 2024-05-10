@@ -11,6 +11,5 @@ class TrailSchema(SchemaBaseModel):
     criador_trilha: int
     carga_horaria: int
     conteudo: str
-    image_trail: Optional [str]
+    image_trail: Optional[str]
     id_prova: Optional[int]
-
